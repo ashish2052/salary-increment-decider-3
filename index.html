@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Salary Increment Decision</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #cfd9df, #e2ebf0);
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .container {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 600px;
+    }
+    h1 {
+      text-align: center;
+      color: #0d47a1;
+      margin-bottom: 20px;
+    }
+    label {
+      font-weight: 600;
+      margin-top: 15px;
+      display: block;
+    }
+    select, input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      background: #f9f9f9;
+      font-size: 1em;
+    }
+    button {
+      margin-top: 25px;
+      width: 100%;
+      padding: 12px;
+      background-color: #0d47a1;
+      color: white;
+      font-size: 1.1em;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+    button:hover {
+      background-color: #1565c0;
+      transform: scale(1.03);
+    }
+    .result {
+      margin-top: 25px;
+      padding: 20px;
+      border-radius: 10px;
+      font-size: 1em;
+      font-weight: 500;
+    }
+    .approve {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+      border: 1px solid #c8e6c9;
+    }
+    .consider {
+      background-color: #fff8e1;
+      color: #f9a825;
+      border: 1px solid #ffe082;
+    }
+    .decline {
+      background-color: #ffebee;
+      color: #c62828;
+      border: 1px solid #ef9a9a;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Salary Increment Decision</h1>
+
+    <label>Months With Us</label>
+    <input type="number" id="months" min="0">
+
+    <label>Visa Type</label>
+    <select id="visa">
+      <option value="GC_USC">GC / USC</option>
+      <option value="H1B">H1B</option>
+      <option value="Others">Others</option>
+    </select>
+
+    <label>Visa Obligation if GC</label>
+    <select id="obligation">
+      <option value="filed">Filed &lt; 6 months ago</option>
+      <option value="not_filed">Not Filed</option>
+    </select>
+
+    <label>Contact with Prime Vendor</label>
+    <select id="vendor">
+      <option value="high">High</option>
+      <option value="mid">Mid</option>
+      <option value="low">Low</option>
+    </select>
+
+    <label>Candidate Referral Probability</label>
+    <select id="referral">
+      <option value="high">High</option>
+      <option value="mid">Mid</option>
+      <option value="low">Low</option>
+    </select>
+
+    <label>Withdrawal Risk (next 6 months)</label>
+    <select id="withdrawal">
+      <option value="low">Low</option>
+      <option value="mid">Mid</option>
+      <option value="high">High</option>
+    </select>
+
+    <label>New Margin</label>
+    <select id="margin">
+      <option value="high">More than 22</option>
+      <option value="mid">20 - 22</option>
+      <option value="low">Less than 20</option>
+    </select>
+
+    <label>Last Salary Increment</label>
+    <select id="lastIncrement">
+      <option value="2plus">Before 2 years</option>
+      <option value="1to2">1–2 years ago</option>
+      <option value="never">Never</option>
+    </select>
+
+    <label>Requested Raise ($)</label>
+    <select id="requestedRaise">
+      <option value="more5">More than $5</option>
+      <option value="btw3and5">$3 – $5</option>
+      <option value="less3">Less than $3</option>
+    </select>
+
+    <button onclick="calculateScore()">Calculate Decision</button>
+
+    <div id="result" class="result"></div>
+  </div>
+
+  <script>
+    function calculateScore() {
+      let score = 0;
+      let reasons = [];
+
+      const months = parseInt(document.getElementById('months').value);
+      const visa = document.getElementById('visa').value;
+      const obligation = document.getElementById('obligation').value;
+      const vendor = document.getElementById('vendor').value;
+      const referral = document.getElementById('referral').value;
+      const withdrawal = document.getElementById('withdrawal').value;
+      const margin = document.getElementById('margin').value;
+      const lastIncrement = document.getElementById('lastIncrement').value;
+      const requestedRaise = document.getElementById('requestedRaise').value;
+
+      if (months > 24) { score += 2; reasons.push("Good loyalty (24+ months)"); }
+      else if (months >= 13) { score += 1; reasons.push("Decent loyalty (13-24 months)"); }
+
+      if (visa === 'GC_USC') { score += 1; reasons.push("Stable Visa Status (GC/USC)"); }
+
+      if (obligation === 'not_filed') { score += 2; reasons.push("GC not filed yet (More flexibility)"); }
+
+      if (vendor === 'high') { score += 2; reasons.push("Strong Prime Vendor Relationship"); }
+      else if (vendor === 'mid') { score += 1; reasons.push("Decent Vendor Relationship"); }
+
+      if (referral === 'high') { score += 2; reasons.push("High Referral Potential"); }
+      else if (referral === 'mid') { score += 1; reasons.push("Some Referral Potential"); }
+
+      if (withdrawal === 'low') { score += 2; reasons.push("Low Withdrawal Risk"); }
+      else if (withdrawal === 'mid') { score += 1; reasons.push("Moderate Withdrawal Risk"); }
+
+      if (margin === 'high') { score += 2; reasons.push("Strong New Margin"); }
+      else if (margin === 'mid') { score += 1; reasons.push("Acceptable Margin"); }
+
+      if (lastIncrement === '2plus' || lastIncrement === 'never') { score += 2; reasons.push("Long Time Since Last Increment"); }
+      else if (lastIncrement === '1to2') { score += 1; reasons.push("Moderate Time Since Increment"); }
+
+      if (requestedRaise === 'less3') { score += 2; reasons.push("Low Raise Requested (<$3)"); }
+      else if (requestedRaise === 'btw3and5') { score += 1; reasons.push("Moderate Raise Requested ($3-$5)"); }
+      else { reasons.push("High Raise Requested (>$5)"); }
+
+      let decisionText = "❌ Decline";
+      let resultClass = "decline";
+
+      if (score >= 15) {
+        decisionText = "✅ Approve";
+        resultClass = "approve";
+      } else if (score >= 12) {
+        decisionText = "⚠️ Consider";
+        resultClass = "consider";
+      }
+
+      document.getElementById('result').className = 'result ' + resultClass;
+      document.getElementById('result').innerHTML = `
+        <strong>Score:</strong> ${score}/18<br>
+        <strong>Decision:</strong> ${decisionText}<br><br>
+        <strong>Reasons:</strong><ul>${reasons.map(r => `<li>${r}</li>`).join('')}</ul>
+      `;
+    }
+  </script>
+
+</body>
+</html>
